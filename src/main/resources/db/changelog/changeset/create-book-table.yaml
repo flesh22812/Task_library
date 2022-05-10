@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-book #текстовый идентификатор (Обязателен)
+      author: Anpilgov Egor # автор (Обязателен)
+      changes:
+        - createTable: # создаем новую таблицу
+            tableName: book
+            columns: # объявления колонок
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: bigint
+                  constraints:
+                    references: author(id)
+                    foreignKeyName: author_id
+              - column:
+                  name: id_genre
+                  type: bigint
+                  constraints:
+                    references: genre(id_genre)
+                    foreignKeyName: id_genre
+
+

@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-role #текстовый идентификатор (Обязателен)
+      author: Anpilgov Egor # автор (Обязателен)
+      changes:
+        - createTable: # создаем новую таблицу
+            tableName: role
+            columns: # объявления колонок
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+
+

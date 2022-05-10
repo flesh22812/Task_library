@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-users-roles #текстовый идентификатор (Обязателен)
+      author: Anpilgov Egor # автор (Обязателен)
+      changes:
+        - createTable:
+            columns:
+
+              - column:
+                  constraints:
+                    references: account(id)
+                    foreignKeyName: user_id
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    references: role(id)
+                    foreignKeyName: role_id
+                  name: role_id
+                  type: BIGINT
+
+            tableName: users_roles
