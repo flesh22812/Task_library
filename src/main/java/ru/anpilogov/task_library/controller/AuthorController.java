@@ -26,7 +26,7 @@ public class AuthorController {
     @PutMapping("/author")// ссылки
     @Operation(summary = "Добавление записи автора ", description = "Позволяет добавить запись по переданному json ")
     public Author saveAuthor(@RequestBody Author author) {
-
+        author.generateId();
         return authorService.addAuthor(author);
 
     }
@@ -45,13 +45,13 @@ public class AuthorController {
 
     }
 
-    @GetMapping("/author")
+    @GetMapping("/authors")
     @Operation(summary = "Вывод всех авторов")
     public ResponseEntity getAllAuthors() {
         return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
-    @PostMapping("/author")
+    @GetMapping("/author")
     @Operation(summary = "Получение записи автора по id ", description = "Позволяет получить автора по полученному параметру id")
     public Optional<Author> getAuthorsById(@RequestParam @Parameter(description = "id книги") Long id) {
         return authorService.getAuthorById(id);

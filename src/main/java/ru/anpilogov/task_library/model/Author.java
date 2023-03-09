@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.Calendar;
+import java.util.Random;
 
 
 @AllArgsConstructor
@@ -15,7 +17,7 @@ import java.util.Calendar;
 @Table(name = "author")
 public class Author {
     @Id
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
     private String name;
@@ -23,11 +25,12 @@ public class Author {
     private String surname;
     @Column
     private String patronymic;
-    @Column (columnDefinition="DATE")
-    private Calendar dateOfBirth;
+    @Column(columnDefinition = "DATE")
+    private Date dateOfBirth;
 
-
-
+    public void generateId() {
+        this.id = new Random().nextLong();
+    }
 }
 
 

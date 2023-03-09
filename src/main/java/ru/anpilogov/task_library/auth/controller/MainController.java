@@ -13,7 +13,10 @@ public class MainController {
     public String root() {
         return "index";
     }
-
+    @GetMapping("/main")
+    public String main() {
+        return "main";
+    }
     @GetMapping("/login")
     public String login(Model model) {
         return "login";
