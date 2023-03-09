@@ -2,59 +2,7 @@
 <html>
 <head>
     <title>Save Author</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
-        }
-
-        h1 {
-            margin-bottom: 30px;
-        }
-
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"] {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            font-size: 16px;
-            font-family: Arial, sans-serif;
-        }
-
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #3e8e41;
-        }
-    </style>
+    <link href="../static/styles.css" rel="stylesheet"/>
 </head>
 <!DOCTYPE html>
 <html>
@@ -70,6 +18,10 @@
             <li><a href="#add-author">Add Author</a></li>
             <li><a href="#update-author">Update Author</a></li>
             <li><a href="#delete-author">Delete Author</a></li>
+            <li><a href="#get-book">Get Book</a></li>
+            <li><a href="#add-book">Add Book</a></li>
+            <li><a href="#update-book">Update Book</a></li>
+            <li><a href="#delete-book">Delete Book</a></li>
         </ul>
     </nav>
 </header>
@@ -77,14 +29,9 @@
     <section id="get-author">
         <h2>Get Author</h2>
 
-        <table cellspacing="30">
+        <table>
 
-            <style>
-                table {
-                    margin: 0 auto;
 
-                }
-            </style>
             <thead>
 
             <tr>
@@ -144,32 +91,270 @@
     </script>
     <section id="update-author">
         <h2>Update Author</h2>
-        <!-- Add the HTML code for the PUT method here -->
+        <form id="update-author-form">
+            <label for="author-idUp">Id:</label>
+            <input type="number" id="author-idUp" name="author-idUp" required>
+            <label for="name">Name:</label>
+            <input type="text" id="nameUp" name="nameUp" required>
+            <label for="surname">Surname:</label>
+            <input type="text" id="surnameUp" name="surnameUp" required>
+            <label for="patronymic">Patronymic:</label>
+            <input type="text" id="patronymicUp" name="patronymicUp">
+            <label for="dateOfBirth">Date of Birth:</label>
+            <input type="date" id="dateOfBirthUp" name="dateOfBirthUp" required>
+            <input type="submit" value="Update">
+        </form>
+        <script>// Function to open a modal dialog
+
+
+        const updateAuthorForm = document.getElementById('update-author-form');
+
+        // Submit event listener for the update author form
+        updateAuthorForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            // Get the form data
+            const formData = new FormData(updateAuthorForm);
+            const authorId = formData.get('author-idUp');
+
+            // Make an HTTP PUT request to the API endpoint to update the author
+            fetch(`http://localhost:8080/library/v1/author/${authorId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: formData.get('nameUp'),
+                    surname: formData.get('surnameUp'),
+                    patronymic: formData.get('patronymicUp'),
+                    dateOfBirth: formData.get('dateOfBirthUp')
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Clear the form inputs
+                    updateAuthorForm.reset();
+
+                    // Reload the author list
+                    getAuthors();
+                })
+                .catch(error => console.error(error));
+        });
+
+        // Function to open the update author modal and pre-populate the form fields
+        function openUpdateAuthorModal(authorId) {
+            // Get the author data from the API endpoint
+            fetch(`http://localhost:8080/library/v1/author/${authorId}`)
+                .then(response => response.json())
+                .then(author => {
+                    // Populate the form fields with the author data
+                    document.getElementById('author-idUp').value = author.id;
+                    document.getElementById('nameUp').value = author.name;
+                    document.getElementById('surnameUp').value = author.surname;
+                    document.getElementById('patronymicUp').value = author.patronymic;
+                    document.getElementById('dateOfBirthUp').value = author.dateOfBirth;
+
+                    // Show the modal
+                    openModal('update-author-modal');
+                })
+                .catch(error => console.error(error));
+        }
+
+        </script>
     </section>
-    <section id="delete-author">
-        <h2>Delete Author</h2>
-        <!-- Add the HTML code for the DELETE method here -->
+    <section id="get-book">
+        <h2>Get Book</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Author</th>
+            </tr>
+            </thead>
+            <tbody id="book-list"></tbody>
+        </table>
+    </section>
+
+    <section id="add-book">
+        <h2>Add Book</h2>
+        <form id="add-book-form">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+            <label for="genre">Genre:</label>
+            <input type="text" id="genre" name="genre" required>
+            <label for="author">Author:</label>
+            <input type="text" id="author" name="author" required>
+            <input type="submit" value="Save">
+        </form>
+    </section>
+    <script>
+        const form = document.getElementById('add-book-form');
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const jsonObject = {};
+            formData.forEach((value, key) => {
+                jsonObject[key] = value
+            });
+            const jsonResult = JSON.stringify(jsonObject);
+            console.log(jsonResult);
+            fetch('/library/v1/book', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonResult
+            })
+                .then(response => {
+                    response.json()
+                    // handle response from backend API
+                })
+                .catch(error => {
+                    // handle error
+                });
+        });
+    </script>
+
+    <section id="update-book">
+        <h2>Update Book</h2>
+        <form id="update-book-form">
+            <label for="book-idUp">ID:</label>
+            <input type="number" id="book-idUp" name="book-idUp" required>
+            <label for="titleUp">Title:</label>
+            <input type="text" id="titleUp" name="titleUp" required>
+            <label for="genreUp">Genre:</label>
+            <input type="text" id="genreUp" name="genreUp" required>
+            <label for="authorUp">Author:</label>
+            <input type="text" id="authorUp" name="authorUp" required>
+            <input type="submit" value="Update">
+        </form>
+        <script>
+            const updateBookForm = document.getElementById('update-book-form');
+            updateBookForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                // Get the form data
+                const formData = new FormData(updateBookForm);
+                const bookId = formData.get('book-idUp');
+                fetch('https://example.com/api/books/${bookId}', {
+                    method: 'PUT',
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Failed to update book.');
+                        }
+                    })
+                    .then(data => {
+// Display success message and/or redirect to success page
+                        console.log('Book updated successfully:', data);
+// ...
+                    })
+                    .catch(error => {
+// Display error message
+                        console.error(error);
+// ...
+                    });
+            });
+        </script>
     </section>
 </main>
 </body>
 </html>
+
+
 <script>
-    // Make an HTTP GET request to the API endpoint
-    fetch('http://localhost:8080/library/v1/author')
-        .then(response => response.json())
-        .then(data => {
-            // Update the HTML page with the response data
-            const authorList = document.getElementById('author-list');
-            data.forEach(author => {
-                const row = authorList.insertRow();
-                row.innerHTML = `
-						<td>${author.id}</td>
-						<td>${author.name}</td>
-						<td>${author.surname}</td>
-						<td>${author.patronymic}</td>
-							<td>${author.dateOfBirth}</td>
-					`;
-            });
-        })
-        .catch(error => console.error(error));
+    function getAuthors() {
+        // Make an HTTP GET request to the API endpoint
+        fetch('http://localhost:8080/library/v1/authors')
+            .then(response => response.json())
+            .then(data => {
+                // Update the HTML page with the response data
+                const authorList = document.getElementById('author-list');
+                authorList.innerHTML = ''; // Clear the existing rows
+                data.forEach(author => {
+                    const row = authorList.insertRow();
+                    row.innerHTML = `
+                        <td>${author.id}</td>
+                        <td>${author.name}</td>
+                        <td>${author.surname}</td>
+                        <td>${author.patronymic}</td>
+                        <td>${new Date(author.dateOfBirth).toLocaleDateString()}</td>
+                        <td>
+                            <button class="remove-btn" data-id="${author.id}">Remove</button>
+                        </td>
+                    `;
+                    const removeButton = row.querySelector('.remove-btn');
+                    removeButton.addEventListener('click', () => {
+                        // Make an HTTP DELETE request to the API endpoint to remove the author
+                        fetch(`http://localhost:8080/library/v1/author/${author.id}`, {
+                            method: 'DELETE'
+                        })
+                            .then(() => {
+                                // Remove the author row from the HTML table
+                                authorList.deleteRow(row.rowIndex);
+                                getAuthors();
+                            })
+                            .catch(error => {
+                                console.error(error);
+                                getAuthors();
+                            });
+                    });
+                });
+            })
+            .catch(error => console.error(error));
+    }
+
+    // Call the function initially to populate the author list
+    getAuthors();
+</script>
+
+<script>
+    function getBooks() {
+        // Make an HTTP GET request to the API endpoint
+        fetch('http://localhost:8080/library/v1/book')
+            .then(response => response.json())
+            .then(data => {
+                // Update the HTML page with the response data
+                const bookList = document.getElementById('book-list');
+                bookList.innerHTML = ''; // Clear the existing rows
+                data.forEach(book => {
+                    const row = bookList.insertRow();
+                    row.innerHTML = `
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.genre.genreName}</td>
+                        <td>${book.author.surname} ${book.author.name} ${book.author.patronymic} </td>
+                        <td>
+                            <button class="remove-btn" data-id="${book.id}">Remove</button>
+                        </td>
+                    `;
+                    const removeButton = row.querySelector('.remove-btn');
+                    removeButton.addEventListener('click', () => {
+                        // Make an HTTP DELETE request to the API endpoint to remove the author
+                        fetch(`http://localhost:8080/library/v1/book/${book.id}`, {
+                            method: 'DELETE'
+                        })
+                            .then(() => {
+                                // Remove the author row from the HTML table
+                                authorList.deleteRow(row.rowIndex);
+                                getAuthors();
+                            })
+                            .catch(error => {
+                                console.error(error);
+                                getAuthors();
+                            });
+                    });
+                });
+            })
+            .catch(error => console.error(error));
+    }
+
+    // Call the function initially to populate the author list
+    getBooks();
 </script>

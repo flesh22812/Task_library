@@ -1,4 +1,4 @@
-package ru.anpilogov.task_library.auth.controller;
+package ru.anpilogov.task_library.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,10 +17,7 @@ public class MainController {
     public String main() {
         return "main";
     }
-    @GetMapping("/login")
-    public String login(Model model) {
-        return "login";
-    }
+
 
     @GetMapping("/admin")
     public ModelAndView redirectWithUsingRedirectPrefix(ModelMap model) {
@@ -32,4 +29,5 @@ public class MainController {
     public String userIndex() {
         return "user/index";
     }
+
 }

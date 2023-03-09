@@ -1,22 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8"/>
-
-    <title>Registration</title>
+    <title>My API</title>
+    <link href="../static/styles.css"  rel="stylesheet" />
+    <script th:src="@{/static/app.js}" type="text/javascript" ></script>
 </head>
 <body>
-</div>
-<h2>Авторазиция прошла успешно!</h2>
-</div>
-</nav>
-<div class="container">
-    <h4><a href="/logout">logout </a></h4>
-    <h4><a href="/admin">Swagger (только админ)</a></h4>
-</div>
-</body>
-</html>
-<body>
+<header>
+    <h1>My API</h1>
+    <nav>
+        <ul>
+            <li><a href="#get-author">Get Author</a></li>
+            <li><a href="#add-update-author">Add/Update Author</a></li>
+            <li><a href="#delete-author">Delete Author</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <section id="get-author">
+        <h2>Get Author</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Patronymic</th>
+                <th>Date of Birth</th>
+            </tr>
+            </thead>
+            <tbody id="author-list"></tbody>
+        </table>
+    </section>
+
+    <section id="add-update-author">
+        <h2>Add/Update Author</h2>
+        <form id="author-form">
+            <input type="hidden" id="id" name="id">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" name="surname" required>
+            <label for="patronymic">Patronymic:</label>
+            <input type="text" id="patronymic" name="patronymic">
+            <label for="dateOfBirth">Date of Birth:</label>
+            <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+            <div class="form-actions">
+                <input type="submit" id="save-author" value="Save">
+                <input type="submit" id="update-author" value="Update" style="display: none;">
+                <button type="button" id="cancel-update" style="display: none;">Cancel</button>
+            </div>
+        </form>
+    </section>
+
+    <section id="delete-author">
+        <h2>Delete Author</h2>
+        <!-- Add the HTML code for the DELETE method here -->
+    </section>
+</main>
 
 </body>
 </html>

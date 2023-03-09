@@ -47,8 +47,8 @@ public class AuthorController {
 
     @GetMapping("/authors")
     @Operation(summary = "Вывод всех авторов")
-    public ResponseEntity getAllAuthors() {
-        return ResponseEntity.ok(authorService.getAllAuthors());
+    public List<Author> getAllAuthors() {
+        return authorService.getAllAuthors();
     }
 
     @GetMapping("/author")
