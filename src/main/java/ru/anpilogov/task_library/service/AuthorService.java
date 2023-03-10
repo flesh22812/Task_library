@@ -25,7 +25,10 @@ public class AuthorService {
         return authorRepository.findAll();
 
     }
+    public List<Author> getAllAuthorsFilter(String name, String surname, String patronymic) {
+        return authorRepository.findAllByNameContaints( name,  surname,  patronymic);
 
+    }
     public Optional<Author> getAuthorById(Long id) {
 
         return authorRepository.findById(id);

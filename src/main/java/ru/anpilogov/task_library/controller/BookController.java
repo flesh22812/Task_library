@@ -1,5 +1,7 @@
 package ru.anpilogov.task_library.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.data.domain.Page;
@@ -7,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ru.anpilogov.task_library.model.Book;
+import ru.anpilogov.task_library.model.DTO;
 import ru.anpilogov.task_library.service.BookService;
 
 import java.util.List;
@@ -33,9 +36,9 @@ public class BookController {
 
     @PatchMapping("/book/{id}")
     @Operation(summary = "Обновление записи автора по id ", description = "Позволяет обновить запись по полученному из ссылки id ")
-    public Book updateBook(@PathVariable Long id, @RequestBody Book book) {
+    public Book updateBook(@PathVariable Long id, @RequestBody  DTO.BookDTO node) {
 
-        return bookService.updateBook(id, book);
+        return bookService.updateBook(id, node);
     }
 
     @DeleteMapping("/book/{id}")
@@ -45,7 +48,7 @@ public class BookController {
 
     }
 
-    @GetMapping("book")
+    @GetMapping("books")
     @Operation(summary = "Вывод всех книг")
     public ResponseEntity getAllBooks() {
         return ResponseEntity.ok(bookService.getAllBooks());

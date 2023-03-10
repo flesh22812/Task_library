@@ -31,7 +31,7 @@ public class GenreService {
     public Genre addGenre(Genre genre) {
         if (genreRepository.findById(genre.getId_genre()).isPresent()) {
             Random r = new Random();
-            genre.setId_genre(r.nextLong());
+            genre.setId_genre((long) r.nextInt(100));
         }
         return genreRepository.save(genre);
     }

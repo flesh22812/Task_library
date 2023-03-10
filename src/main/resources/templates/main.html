@@ -4,11 +4,7 @@
     <title>Save Author</title>
     <link href="../static/styles.css" rel="stylesheet"/>
 </head>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My API</title>
-</head>
+
 <body>
 <header>
     <h1>My API</h1>
@@ -17,11 +13,12 @@
             <li><a href="#get-author">Get Author</a></li>
             <li><a href="#add-author">Add Author</a></li>
             <li><a href="#update-author">Update Author</a></li>
-            <li><a href="#delete-author">Delete Author</a></li>
+
             <li><a href="#get-book">Get Book</a></li>
             <li><a href="#add-book">Add Book</a></li>
             <li><a href="#update-book">Update Book</a></li>
-            <li><a href="#delete-book">Delete Book</a></li>
+            <li><a href="#get-genre">Get Genre</a></li>
+            <li><a href="#add-genre">Add Genre</a></li>
         </ul>
     </nav>
 </header>
@@ -45,6 +42,96 @@
             <tbody id="author-list"></tbody>
         </table>
     </section>
+
+    <body>
+    <h1>Author filter list</h1>
+    <form id="filter-form">
+        <label for="title-filter">Name:</label>
+        <input type="text" id="title-filter" name="name-filter">
+        <br>
+        <label for="author-filter">Surname:</label>
+        <input type="text" id="author-filter" name="surname-filter">
+        <br>
+        <label for="publisher-filter">Patronymic:</label>
+        <input type="text" id="publisher-filter" name="patronymic-filter">
+        <br>
+        <button type="submit">Filter</button>
+    </form>
+    <table id="book-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Patronymic</th>
+            <th>date of birth</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+        const filterForm = document.getElementById('filter-form');
+        const bookTableBody = document.getElementById('book-table').getElementsByTagName('tbody')[0];
+
+        filterForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            // Get the filter form data
+            const formData = new FormData(filterForm);
+            const nameFilter = formData.get('name-filter');
+            const surnameFilter = formData.get('surname-filter');
+            const patronymicFilter = formData.get('patronymic-filter');
+
+            // Build the API query string
+            let queryString = '';
+            if (nameFilter) {
+                queryString += `&name=${encodeURIComponent(nameFilter)}`;
+            }
+            if (surnameFilter) {
+                queryString += `&surname=${encodeURIComponent(surnameFilter)}`;
+            }
+            if (patronymicFilter) {
+                queryString += `&patronymic=${encodeURIComponent(patronymicFilter)}`;
+            }
+
+            if (queryString) {
+                queryString = '?' + queryString.substring(1);
+            }
+
+            // Fetch the filtered book list from the API
+            fetch(`http://localhost:8080/library/v1/authors/filter/${queryString}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to fetch book list.');
+                    }
+                })
+                .then(data => {
+                    // Clear the current book list from the table
+                    bookTableBody.innerHTML = '';
+
+                    // Append each book as a new row to the table
+                    data.forEach(author => {
+                        const row = bookTableBody.insertRow();
+                        row.innerHTML = `
+                            <td>${author.id}</td>
+                            <td>${author.name}</td>
+                            <td>${author.surname}</td>
+                            <td>${author.patronymic}</td>
+                            <td>${new Date(author.dateOfBirth).toLocaleDateString()}</td>
+
+                        `;
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                    window.alert('An error occurred while fetching the book list. Please try again later.'); // Display alert message
+                });
+        });
+    </script>
+    </body>
+
 
     </section>
     <section id="add-author">
@@ -73,11 +160,11 @@
             const jsonResult = JSON.stringify(jsonObject);
             console.log(jsonResult);
             fetch('/library/v1/author', {
-                method: 'PUT',
-                headers: {
+                "method": 'PUT',
+                "headers": {
                     'Content-Type': 'application/json'
                 },
-                body: jsonResult
+                "body": jsonResult
             })
                 .then(response => {
                     response.json()
@@ -119,15 +206,15 @@
 
             // Make an HTTP PUT request to the API endpoint to update the author
             fetch(`http://localhost:8080/library/v1/author/${authorId}`, {
-                method: 'PATCH',
-                headers: {
+                "method": 'PATCH',
+                "headers": {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    name: formData.get('nameUp'),
-                    surname: formData.get('surnameUp'),
-                    patronymic: formData.get('patronymicUp'),
-                    dateOfBirth: formData.get('dateOfBirthUp')
+                "body": JSON.stringify({
+                    "name": formData.get('nameUp'),
+                    "surname": formData.get('surnameUp'),
+                    "patronymic": formData.get('patronymicUp'),
+                    "dateOfBirth": formData.get('dateOfBirthUp')
                 })
             })
                 .then(response => response.json())
@@ -201,19 +288,23 @@
             });
             const jsonResult = JSON.stringify(jsonObject);
             console.log(jsonResult);
-            fetch('/library/v1/book', {
-                method: 'PUT',
-                headers: {
+            fetch('http://localhost:8080/library/v1/book', {
+                "method": 'PUT',
+                "headers": {
                     'Content-Type': 'application/json'
                 },
-                body: jsonResult
+                "body": jsonResult
             })
                 .then(response => {
                     response.json()
-                    // handle response from backend API
+                    window.alert('Book added!');
+                    getAuthors();
                 })
                 .catch(error => {
-                    // handle error
+                    console.error(error);
+                    window.alert('An error occurred while updating the book. Please try again later.'); // Display alert message
+
+
                 });
         });
     </script>
@@ -224,11 +315,11 @@
             <label for="book-idUp">ID:</label>
             <input type="number" id="book-idUp" name="book-idUp" required>
             <label for="titleUp">Title:</label>
-            <input type="text" id="titleUp" name="titleUp" required>
+            <input type="text" id="titleUp" name="title" required>
             <label for="genreUp">Genre:</label>
-            <input type="text" id="genreUp" name="genreUp" required>
+            <input type="text" id="genreUp" name="genreId" required>
             <label for="authorUp">Author:</label>
-            <input type="text" id="authorUp" name="authorUp" required>
+            <input type="text" id="authorUp" name="authorId" required>
             <input type="submit" value="Update">
         </form>
         <script>
@@ -238,14 +329,25 @@
 
                 // Get the form data
                 const formData = new FormData(updateBookForm);
+                const requestBody = {};
+
+// Iterate over the form data and add the values to the request body object
+                for (const [key, value] of formData.entries()) {
+                    requestBody[key] = value;
+                }
                 const bookId = formData.get('book-idUp');
-                fetch('https://example.com/api/books/${bookId}', {
-                    method: 'PUT',
-                    body: formData
+                fetch(`http://localhost:8080/library/v1/book/${bookId}`, {
+                    "method": 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    "body": JSON.stringify(requestBody)
                 })
                     .then(response => {
                         if (response.ok) {
+                            window.alert('Book updated successfully!');
                             return response.json();
+
                         } else {
                             throw new Error('Failed to update book.');
                         }
@@ -256,16 +358,14 @@
 // ...
                     })
                     .catch(error => {
-// Display error message
+
                         console.error(error);
-// ...
+                        window.alert('An error occurred while updating the book. Please try again later.'); // Display alert message
+
                     });
             });
         </script>
     </section>
-</main>
-</body>
-</html>
 
 
 <script>
@@ -293,7 +393,7 @@
                     removeButton.addEventListener('click', () => {
                         // Make an HTTP DELETE request to the API endpoint to remove the author
                         fetch(`http://localhost:8080/library/v1/author/${author.id}`, {
-                            method: 'DELETE'
+                            "method": 'DELETE'
                         })
                             .then(() => {
                                 // Remove the author row from the HTML table
@@ -310,14 +410,17 @@
             .catch(error => console.error(error));
     }
 
-    // Call the function initially to populate the author list
+    /**
+     * Call the function initially to populate the author list
+     */
     getAuthors();
 </script>
+
 
 <script>
     function getBooks() {
         // Make an HTTP GET request to the API endpoint
-        fetch('http://localhost:8080/library/v1/book')
+        fetch('http://localhost:8080/library/v1/books')
             .then(response => response.json())
             .then(data => {
                 // Update the HTML page with the response data
@@ -338,7 +441,7 @@
                     removeButton.addEventListener('click', () => {
                         // Make an HTTP DELETE request to the API endpoint to remove the author
                         fetch(`http://localhost:8080/library/v1/book/${book.id}`, {
-                            method: 'DELETE'
+                            "method": 'DELETE'
                         })
                             .then(() => {
                                 // Remove the author row from the HTML table
@@ -358,3 +461,83 @@
     // Call the function initially to populate the author list
     getBooks();
 </script>
+
+<script>
+    function getGenres() {
+        // Make an HTTP GET request to the API endpoint
+        fetch('http://localhost:8080/library/v1/genre')
+            .then(response => response.json())
+            .then(data => {
+                // Update the HTML page with the response data
+                const genreList = document.getElementById('genre-list');
+                genreList.innerHTML = ''; // Clear the existing rows
+                data.forEach(genre => {
+                    const row = genreList.insertRow();
+                    row.innerHTML = `
+                        <td>${genre.id_genre}</td>
+                        <td>${genre.genreName}</td>
+                    `;
+                });
+            })
+            .catch(error => console.error(error));
+    }
+
+    /**
+     * Call the function initially to populate the genre list
+     */
+    getGenres();
+</script>
+<section id="get-genre">
+    <h2>Get Genre</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+        </thead>
+        <tbody id="genre-list"></tbody>
+    </table>
+</section>
+<section id="add-genre">
+    <h2>Add Genre</h2>
+    <form id="add-genre-form1">
+        <label for="genreName">Name:</label>
+        <input type="text" id="genreName" name="genreName" required>
+        <input type="submit" value="Save">
+    </form>
+
+    <script>
+        const form1 = document.getElementById('add-genre-form1');
+        form1.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const genreName1 = formData.get('genreName');
+            const newGenre = {
+                id_genre: 0,
+                genreName: genreName1
+            };
+            const jsonResult = JSON.stringify(newGenre);
+            console.log(jsonResult);
+            fetch('http://localhost:8080/library/v1/genre', {
+                "method": 'PUT',
+                "headers": {
+                    'Content-Type': 'application/json'
+                },
+                "body": jsonResult
+            })
+                .then(response => {
+                    response.json()
+                    window.alert('Genre added!');
+                    getGenres(); // Call function to update the genre list
+                })
+                .catch(error => {
+                    console.error(error);
+                    window.alert('An error occurred while adding the genre. Please try again later.'); // Display alert message
+                });
+        });
+    </script>
+</section>
+</main>
+</body>
+</html>

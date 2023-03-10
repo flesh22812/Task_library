@@ -51,11 +51,20 @@ public class AuthorController {
         return authorService.getAllAuthors();
     }
 
+    @GetMapping("/authors/filter")
+    @Operation(summary = "Вывод всех авторов")
+    public List<Author> getAllAuthorsFilter(@RequestParam(required = false) String name,
+                                            @RequestParam(required = false) String surname,
+                                            @RequestParam(required = false) String patronymic) {
+        return authorService.getAllAuthorsFilter( name,  surname,  patronymic);
+    }
+
     @GetMapping("/author")
     @Operation(summary = "Получение записи автора по id ", description = "Позволяет получить автора по полученному параметру id")
     public Optional<Author> getAuthorsById(@RequestParam @Parameter(description = "id книги") Long id) {
         return authorService.getAuthorById(id);
     }
+
 
     @GetMapping("/author/pages")
     public Page<Author> findAllPagesAuthors(@RequestParam("page") @Parameter(description = "Номер страницы") int page,

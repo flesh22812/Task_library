@@ -1,5 +1,6 @@
 package ru.anpilogov.task_library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,12 +21,11 @@ public class Book {
 
     @JoinColumn(name = "id_genre")
     @OneToOne
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Genre genre;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
-
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Author author;
-
-
 }
