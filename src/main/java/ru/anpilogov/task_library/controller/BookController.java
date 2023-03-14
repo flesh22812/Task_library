@@ -28,7 +28,7 @@ public class BookController {
 
     @PutMapping("/book")
     @Operation(summary = "Добавление записи книги ", description = "Позволяет добавить запись по переданному json ")
-    public Book saveBook(@RequestBody Book book) {
+    public Book saveBook(@RequestBody DTO.BookDTO book) {
 
         return bookService.addBook(book);
 

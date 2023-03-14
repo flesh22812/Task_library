@@ -39,11 +39,13 @@ public class BookService {
 
     }
 
-    public Book addBook(Book book) {
-        if (bookRepository.findById(book.getId()).isPresent()) {
-            Random r = new Random();
-            book.setId(r.nextLong());
-        }
+    public Book addBook(DTO.BookDTO node) {
+     Random r = new Random();
+        Book book = new Book();
+        book.setId((long) r.nextInt(1000));
+        book.setTitle(node.getTitle());
+        book.setAuthor(authorRepository.getById(node.getAuthorId()));
+        book.setGenre(genreRepository.getById(node.getGenreId()));
         return bookRepository.save(book);
     }
 
